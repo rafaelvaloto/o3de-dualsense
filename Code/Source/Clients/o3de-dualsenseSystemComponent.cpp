@@ -84,7 +84,7 @@ namespace o3de_dualsense
                     if (Trigger)
                     {
                         Trigger->SetBow22(0xf8, 0x3f, EDSGamepadHand::Left);
-                        Trigger->SetMachine27(0x80, 0x02, 0x03, 0x0f, 0x19, 0x02, EDSGamepadHand::Right);
+                        Trigger->SetMachine27(0x80, 0x02, 0x03, 0x3f, 0x06, 0x02, EDSGamepadHand::Right);
                     }
 
                     std::this_thread::sleep_for(std::chrono::milliseconds(100));

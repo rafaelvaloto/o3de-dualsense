@@ -5,6 +5,7 @@
 #include <AzFramework/Input/Channels/InputChannelDigital.h>
 #include <AzFramework/Input/Devices/InputDevice.h>
 #include <GCore/Interfaces/ISonyGamepad.h>
+#include <o3de-dualsense/o3de-dualsenseTypeIds.h>
 
 namespace AzFramework
 {
