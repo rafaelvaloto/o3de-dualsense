@@ -1,0 +1,3 @@
+[submodule "Code/Source/ThirdParty/GamepadCore"]
+	path = Code/Source/ThirdParty/GamepadCore
+	url = https://github.com/rafaelvaloto/Gamepad-Core.git
