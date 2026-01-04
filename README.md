@@ -20,7 +20,7 @@
 
 ## 📖 Overview
 
-**o3de-dualsense** is a prototype gem that demonstrates how to integrate Sony DualSense (PS5) controllers into O3DE using [GamepadCore](https://github.com/user/gamepad-core). This project serves as a **starting point** and **reference implementation** for developers looking to add custom gamepad support to their O3DE projects.
+**o3de-dualsense** is a prototype gem that demonstrates how to integrate Sony DualSense (PS5) controllers into O3DE using [GamepadCore](https://github.com/rafaelvaloto/gamepad-core). This project serves as a **starting point** and **reference implementation** for developers looking to add custom gamepad support to their O3DE projects.
 
 > ⚠️ **Note:** This is a prototype for validating GamepadCore use cases. It provides a solid foundation but is not a production-ready implementation.
 
