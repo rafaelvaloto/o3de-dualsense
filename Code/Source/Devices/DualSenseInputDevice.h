@@ -1,12 +1,13 @@
 ﻿#pragma once
 
+#include <AzFramework/Input/Channels/InputChannelAnalog.h>
+#include <AzFramework/Input/Channels/InputChannelAxis2D.h>
+#include <AzFramework/Input/Channels/InputChannelDigital.h>
 #include <AzFramework/Input/Devices/InputDevice.h>
 #include <GCore/Interfaces/ISonyGamepad.h>
-#include <AzFramework/Input/Channels/InputChannelDigital.h>
-#include <AzFramework/Input/Channels/InputChannelAxis2D.h>
-#include <AzFramework/Input/Channels/InputChannelAnalog.h>
 
-namespace AzFramework {
+namespace AzFramework
+{
     class InputChannelDigital;
 }
 
@@ -37,7 +38,6 @@ namespace o3de_dualsense
         InputDeviceId m_deviceId;
         InputChannelByIdMap m_allChannelsById;
 
-
         InputChannelDigital* buttonCross;
         InputChannelDigital* buttonSquare;
         InputChannelDigital* buttonTriangle;
@@ -47,4 +47,4 @@ namespace o3de_dualsense
         InputChannelAnalog* L2;
         InputChannelAnalog* R2;
     };
-}
+} // namespace o3de_dualsense

@@ -1,10 +1,9 @@
 
 #pragma once
 
-#include <o3de-dualsense/o3de-dualsenseTypeIds.h>
-
 #include <AzCore/EBus/EBus.h>
 #include <AzCore/Interface/Interface.h>
+#include <o3de-dualsense/o3de-dualsenseTypeIds.h>
 
 namespace o3de_dualsense
 {
@@ -16,8 +15,7 @@ namespace o3de_dualsense
         // Put your public methods here
     };
 
-    class o3de_dualsenseBusTraits
-        : public AZ::EBusTraits
+    class o3de_dualsenseBusTraits : public AZ::EBusTraits
     {
     public:
         //////////////////////////////////////////////////////////////////////////

@@ -1,17 +1,16 @@
 ﻿#pragma once
 #ifdef _WIN32
 
+#include "GCore/Types/Structs/Config/GamepadCalibration.h"
+#include "GCore/Types/Structs/Context/DeviceContext.h"
+#include "GImplementations/Utils/GamepadSensors.h"
 
 #include <Windows.h>
-#include <hidsdi.h>
 #include <filesystem>
+#include <hidsdi.h>
 #include <initguid.h>
 #include <setupapi.h>
 #include <vector>
-
-#include "GCore/Types/Structs/Context/DeviceContext.h"
-#include "GImplementations/Utils/GamepadSensors.h"
-#include "GCore/Types/Structs/Config/GamepadCalibration.h"
 
 /**
  * @brief Enumerates the possible outcomes of a polling operation in HID device communication.
@@ -28,8 +27,10 @@ enum class ETest_PollResult
     Disconnected
 };
 
-namespace o3de_dualsense {
-    class WindowsDeviceInfo {
+namespace o3de_dualsense
+{
+    class WindowsDeviceInfo
+    {
     public:
         WindowsDeviceInfo() = default;
 
@@ -37,7 +38,8 @@ namespace o3de_dualsense {
 
         static void InitializeAudioDevice(FDeviceContext* /*Context*/) {}
 
-        static void ProcessAudioHapitc(FDeviceContext *Context) {
+        static void ProcessAudioHapitc(FDeviceContext* Context)
+        {
             if (!Context || !Context->Handle)
             {
                 return;
@@ -65,10 +67,13 @@ namespace o3de_dualsense {
          * This method is used to initialize and set up Bluetooth-related features on a HID device.
          * It communicates with the device using a feature report and updates the provided device context accordingly.
          *
-         * @param Context A reference to the device context object that holds device-specific settings and state information.
-         * @return A boolean indicating whether the Bluetooth feature configuration was successful (true) or failed (false).
+         * @param Context A reference to the device context object that holds device-specific settings and state
+         * information.
+         * @return A boolean indicating whether the Bluetooth feature configuration was successful (true) or failed
+         * (false).
          */
-        static void ConfigureFeatures(FDeviceContext *Context) {
+        static void ConfigureFeatures(FDeviceContext* Context)
+        {
             unsigned char FeatureBuffer[41] = {0};
             std::memset(FeatureBuffer, 0, sizeof(FeatureBuffer));
 
@@ -93,33 +98,40 @@ namespace o3de_dualsense {
         /**
          * @brief Reads data from the specified HID device context.
          *
-         * This method performs the process of retrieving input data from an HID device, verifying the context's validity,
-         * handling connection states, and managing input buffers. It also utilizes polling mechanisms to detect and
-         * report disconnection events or communication failures during the read process.
+         * This method performs the process of retrieving input data from an HID device, verifying the context's
+         * validity, handling connection states, and managing input buffers. It also utilizes polling mechanisms to
+         * detect and report disconnection events or communication failures during the read process.
          *
          * @param Context Pointer to the device context representing the HID device being read. Must not be null and
          *        should contain a valid device handle and input buffer. If the context is invalid or disconnected,
          *        the method will handle associated cleanup and reporting.
          */
-        static void Read(FDeviceContext *Context) {
-            if (!Context) {
+        static void Read(FDeviceContext* Context)
+        {
+            if (!Context)
+            {
                 return;
             }
 
-            if (Context->Handle == INVALID_PLATFORM_HANDLE) {
+            if (Context->Handle == INVALID_PLATFORM_HANDLE)
+            {
                 return;
             }
 
-            if (!Context->IsConnected) {
+            if (!Context->IsConnected)
+            {
                 return;
             }
 
             DWORD BytesRead = 0;
-            if (Context->ConnectionType == EDSDeviceConnection::Bluetooth && Context->DeviceType ==
-                EDSDeviceType::DualShock4) {
+            if (Context->ConnectionType == EDSDeviceConnection::Bluetooth &&
+                Context->DeviceType == EDSDeviceType::DualShock4)
+            {
                 constexpr size_t InputReportLength = 547;
                 PollTick(Context->Handle, Context->BufferDS4, InputReportLength, BytesRead);
-            } else {
+            }
+            else
+            {
                 const size_t ReportLength = Context->ConnectionType == EDSDeviceConnection::Bluetooth ? 78 : 64;
                 PollTick(Context->Handle, Context->Buffer, static_cast<DWORD>(ReportLength), BytesRead);
             }
@@ -137,8 +149,10 @@ namespace o3de_dualsense {
          *        handle, connection type, device type, and output buffer. Must not be null and must
          *        represent a valid device handle for a successful write operation.
          */
-        static void Write(FDeviceContext *Context) {
-            if (Context->Handle == INVALID_HANDLE_VALUE) {
+        static void Write(FDeviceContext* Context)
+        {
+            if (Context->Handle == INVALID_HANDLE_VALUE)
+            {
                 return;
             }
 
@@ -146,7 +160,9 @@ namespace o3de_dualsense {
             size_t OutputReportLength = Context->ConnectionType == EDSDeviceConnection::Bluetooth ? 78 : InReportLength;
 
             DWORD BytesWritten = 0;
-            if (!WriteFile(Context->Handle, Context->BufferOutput, static_cast<DWORD>(OutputReportLength), &BytesWritten, nullptr)) {
+            if (!WriteFile(Context->Handle, Context->BufferOutput, static_cast<DWORD>(OutputReportLength),
+                           &BytesWritten, nullptr))
+            {
             }
         }
 
@@ -160,13 +176,15 @@ namespace o3de_dualsense {
          * @param Devices A reference to an array of FDeviceContext objects that will be updated to include
          *        the detected and initialized HID device contexts. Existing data in the array will be overwritten.
          */
-        static void Detect(std::vector<FDeviceContext> &Devices) {
+        static void Detect(std::vector<FDeviceContext>& Devices)
+        {
             GUID HidGuid;
             HidD_GetHidGuid(&HidGuid);
 
-            const HDEVINFO DeviceInfoSet = SetupDiGetClassDevs(&HidGuid, nullptr, nullptr,
-                                                               DIGCF_PRESENT | DIGCF_DEVICEINTERFACE);
-            if (DeviceInfoSet == INVALID_HANDLE_VALUE) {
+            const HDEVINFO DeviceInfoSet =
+                SetupDiGetClassDevs(&HidGuid, nullptr, nullptr, DIGCF_PRESENT | DIGCF_DEVICEINTERFACE);
+            if (DeviceInfoSet == INVALID_HANDLE_VALUE)
+            {
                 return;
             }
 
@@ -174,56 +192,62 @@ namespace o3de_dualsense {
             DeviceInterfaceData.cbSize = sizeof(SP_DEVICE_INTERFACE_DATA);
 
             std::unordered_map<int, std::string> DevicePaths;
-            for (int DeviceIndex = 0; SetupDiEnumDeviceInterfaces(DeviceInfoSet, nullptr, &HidGuid, DeviceIndex,
-                                                                  &DeviceInterfaceData);
-                 DeviceIndex++) {
+            for (int DeviceIndex = 0;
+                 SetupDiEnumDeviceInterfaces(DeviceInfoSet, nullptr, &HidGuid, DeviceIndex, &DeviceInterfaceData);
+                 DeviceIndex++)
+            {
                 DWORD RequiredSize = 0;
                 SetupDiGetDeviceInterfaceDetail(DeviceInfoSet, &DeviceInterfaceData, nullptr, 0, &RequiredSize,
                                                 nullptr);
 
                 const auto DetailDataBuffer = static_cast<PSP_DEVICE_INTERFACE_DETAIL_DATA>(malloc(RequiredSize));
-                if (!DetailDataBuffer) {
+                if (!DetailDataBuffer)
+                {
                     continue;
                 }
 
                 DetailDataBuffer->cbSize = sizeof(SP_DEVICE_INTERFACE_DETAIL_DATA);
                 if (SetupDiGetDeviceInterfaceDetail(DeviceInfoSet, &DeviceInterfaceData, DetailDataBuffer, RequiredSize,
-                                                    nullptr, nullptr)) {
+                                                    nullptr, nullptr))
+                {
 
                     std::wstring MyStdString = std::filesystem::path(DetailDataBuffer->DevicePath).wstring();
-                    const HANDLE TempDeviceHandle = CreateFileW(
-                        MyStdString.data(),
-                        GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, nullptr, OPEN_EXISTING, 0,
-                        nullptr);
+                    const HANDLE TempDeviceHandle =
+                        CreateFileW(MyStdString.data(), GENERIC_READ | GENERIC_WRITE,
+                                    FILE_SHARE_READ | FILE_SHARE_WRITE, nullptr, OPEN_EXISTING, 0, nullptr);
 
-                    if (TempDeviceHandle != INVALID_HANDLE_VALUE) {
+                    if (TempDeviceHandle != INVALID_HANDLE_VALUE)
+                    {
                         HIDD_ATTRIBUTES Attributes = {};
                         Attributes.Size = sizeof(HIDD_ATTRIBUTES);
 
-                        if (HidD_GetAttributes(TempDeviceHandle, &Attributes)) {
-                            if (
-                                Attributes.VendorID == 0x054C &&
-                                (Attributes.ProductID == 0x0CE6 ||
-                                 Attributes.ProductID == 0x0DF2 ||
-                                 Attributes.ProductID == 0x05C4 ||
-                                 Attributes.ProductID == 0x09CC)) {
+                        if (HidD_GetAttributes(TempDeviceHandle, &Attributes))
+                        {
+                            if (Attributes.VendorID == 0x054C &&
+                                (Attributes.ProductID == 0x0CE6 || Attributes.ProductID == 0x0DF2 ||
+                                 Attributes.ProductID == 0x05C4 || Attributes.ProductID == 0x09CC))
+                            {
                                 FDeviceContext Context = {};
                                 wchar_t DeviceProductString[260];
-                                if (HidD_GetProductString(TempDeviceHandle, DeviceProductString, 260)) {
-                                    if (DevicePaths.find(DeviceIndex) == DevicePaths.end()) {
-                                        std::string FinalString = std::filesystem::path(DetailDataBuffer->DevicePath).
-                                                string();
+                                if (HidD_GetProductString(TempDeviceHandle, DeviceProductString, 260))
+                                {
+                                    if (DevicePaths.find(DeviceIndex) == DevicePaths.end())
+                                    {
+                                        std::string FinalString =
+                                            std::filesystem::path(DetailDataBuffer->DevicePath).string();
                                         Context.Path = FinalString;
                                         DevicePaths[DeviceIndex] = FinalString;
-                                        switch (Attributes.ProductID) {
-                                            case 0x05C4:
-                                            case 0x09CC:
-                                                Context.DeviceType = EDSDeviceType::DualShock4;
-                                                break;
-                                            case 0x0DF2:
-                                                Context.DeviceType = EDSDeviceType::DualSenseEdge;
-                                                break;
-                                            default: Context.DeviceType = EDSDeviceType::DualSense;
+                                        switch (Attributes.ProductID)
+                                        {
+                                        case 0x05C4:
+                                        case 0x09CC:
+                                            Context.DeviceType = EDSDeviceType::DualShock4;
+                                            break;
+                                        case 0x0DF2:
+                                            Context.DeviceType = EDSDeviceType::DualSenseEdge;
+                                            break;
+                                        default:
+                                            Context.DeviceType = EDSDeviceType::DualSense;
                                         }
 
                                         Context.IsConnected = true;
@@ -231,7 +255,8 @@ namespace o3de_dualsense {
                                         const std::string BtGuid = "{00001124-0000-1000-8000-00805f9b34fb}";
                                         if (FinalString.find(BtGuid) != std::string::npos ||
                                             FinalString.find("bth") != std::string::npos ||
-                                            FinalString.find("BTHENUM") != std::string::npos) {
+                                            FinalString.find("BTHENUM") != std::string::npos)
+                                        {
                                             Context.ConnectionType = EDSDeviceConnection::Bluetooth;
                                         }
                                     }
@@ -256,14 +281,16 @@ namespace o3de_dualsense {
          * @param Context A pointer to the device context containing the device path and other relevant information.
          * @return True if the handle creation is successful; otherwise, false.
          */
-        static bool CreateHandle(FDeviceContext *Context) {
+        static bool CreateHandle(FDeviceContext* Context)
+        {
             std::string Source = Context->Path;
             std::wstring MyStdString = std::filesystem::path(Source).wstring();
-            const HANDLE DeviceHandle = CreateFileW(
-                MyStdString.data(),
-                GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, nullptr, OPEN_EXISTING, 0, nullptr);
+            const HANDLE DeviceHandle =
+                CreateFileW(MyStdString.data(), GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE,
+                            nullptr, OPEN_EXISTING, 0, nullptr);
 
-            if (DeviceHandle == INVALID_PLATFORM_HANDLE) {
+            if (DeviceHandle == INVALID_PLATFORM_HANDLE)
+            {
                 Context->Handle = DeviceHandle;
                 return false;
             }
@@ -283,12 +310,15 @@ namespace o3de_dualsense {
          * @param Context Pointer to the device context representing the HID device whose handle is to be invalidated.
          *        If the provided context is null, the method will return without performing any operations.
          */
-        static void InvalidateHandle(FDeviceContext *Context) {
-            if (!Context) {
+        static void InvalidateHandle(FDeviceContext* Context)
+        {
+            if (!Context)
+            {
                 return;
             }
 
-            if (Context->Handle != INVALID_PLATFORM_HANDLE) {
+            if (Context->Handle != INVALID_PLATFORM_HANDLE)
+            {
                 CloseHandle(Context->Handle);
                 Context->Handle = INVALID_PLATFORM_HANDLE;
                 Context->IsConnected = false;
@@ -312,15 +342,19 @@ namespace o3de_dualsense {
          *                     On successful execution, this will be set to ERROR_SUCCESS.
          * @return True if the ping operation succeeds; otherwise, false.
          */
-        static bool PingOnce(HANDLE Handle, std::int32_t *OutLastError = nullptr) {
+        static bool PingOnce(HANDLE Handle, std::int32_t* OutLastError = nullptr)
+        {
             FILE_STANDARD_INFO Info{};
-            if (!GetFileInformationByHandleEx(Handle, FileStandardInfo, &Info, sizeof(Info))) {
-                if (OutLastError) {
+            if (!GetFileInformationByHandleEx(Handle, FileStandardInfo, &Info, sizeof(Info)))
+            {
+                if (OutLastError)
+                {
                     *OutLastError = GetLastError();
                 }
                 return false;
             }
-            if (OutLastError) {
+            if (OutLastError)
+            {
                 *OutLastError = ERROR_SUCCESS;
             }
             return true;
@@ -329,8 +363,8 @@ namespace o3de_dualsense {
         /**
          * @brief Polls and processes a single tick for a HID device, performing ping and read operations.
          *
-         * This method checks the device's state, performs a ping operation if necessary, and reads data from the device.
-         * It updates the polling state accordingly and determines the result of this polling iteration.
+         * This method checks the device's state, performs a ping operation if necessary, and reads data from the
+         * device. It updates the polling state accordingly and determines the result of this polling iteration.
          *
          * @param Handle A handle to the HID device being polled.
          * @param Buffer A pointer to a buffer where the method writes the data read from the device.
@@ -338,13 +372,14 @@ namespace o3de_dualsense {
          * @param OutBytesRead A reference to a variable where the number of bytes successfully read will be stored.
          * @return An enumeration value of type EPollResult indicating the result of the polling operation.
          */
-        static ETest_PollResult PollTick(HANDLE Handle, unsigned char *Buffer, std::int32_t Length,
-                                         DWORD &OutBytesRead) {
+        static ETest_PollResult PollTick(HANDLE Handle, unsigned char* Buffer, std::int32_t Length, DWORD& OutBytesRead)
+        {
             std::int32_t Err = ERROR_SUCCESS;
             PingOnce(Handle, &Err);
 
             OutBytesRead = 0;
-            if (!ReadFile(Handle, Buffer, Length, &OutBytesRead, nullptr)) {
+            if (!ReadFile(Handle, Buffer, Length, &OutBytesRead, nullptr))
+            {
                 return ETest_PollResult::Disconnected;
             }
 
@@ -360,17 +395,21 @@ namespace o3de_dualsense {
          * @param Error The error code to evaluate.
          * @return true if the error code indicates a device disconnection, false otherwise.
          */
-        static bool ShouldTreatAsDisconnected(const std::int32_t Error) {
-            switch (Error) {
-                case ERROR_DEVICE_NOT_CONNECTED:
-                case ERROR_GEN_FAILURE:
-                case ERROR_INVALID_HANDLE:
-                case ERROR_BAD_COMMAND:
-                case ERROR_FILE_NOT_FOUND:
-                case ERROR_ACCESS_DENIED: return true;
-                default: return false;
+        static bool ShouldTreatAsDisconnected(const std::int32_t Error)
+        {
+            switch (Error)
+            {
+            case ERROR_DEVICE_NOT_CONNECTED:
+            case ERROR_GEN_FAILURE:
+            case ERROR_INVALID_HANDLE:
+            case ERROR_BAD_COMMAND:
+            case ERROR_FILE_NOT_FOUND:
+            case ERROR_ACCESS_DENIED:
+                return true;
+            default:
+                return false;
             }
         }
     };
-}
+} // namespace o3de_dualsense
 #endif

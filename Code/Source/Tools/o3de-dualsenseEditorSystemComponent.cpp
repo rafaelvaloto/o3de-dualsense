@@ -1,20 +1,19 @@
 
-#include <AzCore/Serialization/SerializeContext.h>
 #include "o3de-dualsenseEditorSystemComponent.h"
 
+#include <AzCore/Serialization/SerializeContext.h>
 #include <o3de-dualsense/o3de-dualsenseTypeIds.h>
 
 namespace o3de_dualsense
 {
     AZ_COMPONENT_IMPL(o3de_dualsenseEditorSystemComponent, "o3de_dualsenseEditorSystemComponent",
-        o3de_dualsenseEditorSystemComponentTypeId, BaseSystemComponent);
+                      o3de_dualsenseEditorSystemComponentTypeId, BaseSystemComponent);
 
     void o3de_dualsenseEditorSystemComponent::Reflect(AZ::ReflectContext* context)
     {
         if (auto serializeContext = azrtti_cast<AZ::SerializeContext*>(context))
         {
-            serializeContext->Class<o3de_dualsenseEditorSystemComponent, o3de_dualsenseSystemComponent>()
-                ->Version(0);
+            serializeContext->Class<o3de_dualsenseEditorSystemComponent, o3de_dualsenseSystemComponent>()->Version(0);
         }
     }
 
@@ -22,24 +21,28 @@ namespace o3de_dualsense
 
     o3de_dualsenseEditorSystemComponent::~o3de_dualsenseEditorSystemComponent() = default;
 
-    void o3de_dualsenseEditorSystemComponent::GetProvidedServices(AZ::ComponentDescriptor::DependencyArrayType& provided)
+    void
+    o3de_dualsenseEditorSystemComponent::GetProvidedServices(AZ::ComponentDescriptor::DependencyArrayType& provided)
     {
         BaseSystemComponent::GetProvidedServices(provided);
         provided.push_back(AZ_CRC_CE("o3de_dualsenseEditorService"));
     }
 
-    void o3de_dualsenseEditorSystemComponent::GetIncompatibleServices(AZ::ComponentDescriptor::DependencyArrayType& incompatible)
+    void o3de_dualsenseEditorSystemComponent::GetIncompatibleServices(
+        AZ::ComponentDescriptor::DependencyArrayType& incompatible)
     {
         BaseSystemComponent::GetIncompatibleServices(incompatible);
         incompatible.push_back(AZ_CRC_CE("o3de_dualsenseEditorService"));
     }
 
-    void o3de_dualsenseEditorSystemComponent::GetRequiredServices([[maybe_unused]] AZ::ComponentDescriptor::DependencyArrayType& required)
+    void o3de_dualsenseEditorSystemComponent::GetRequiredServices(
+        [[maybe_unused]] AZ::ComponentDescriptor::DependencyArrayType& required)
     {
         BaseSystemComponent::GetRequiredServices(required);
     }
 
-    void o3de_dualsenseEditorSystemComponent::GetDependentServices([[maybe_unused]] AZ::ComponentDescriptor::DependencyArrayType& dependent)
+    void o3de_dualsenseEditorSystemComponent::GetDependentServices(
+        [[maybe_unused]] AZ::ComponentDescriptor::DependencyArrayType& dependent)
     {
         BaseSystemComponent::GetDependentServices(dependent);
     }

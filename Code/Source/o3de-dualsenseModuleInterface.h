@@ -6,8 +6,7 @@
 
 namespace o3de_dualsense
 {
-    class o3de_dualsenseModuleInterface
-        : public AZ::Module
+    class o3de_dualsenseModuleInterface : public AZ::Module
     {
     public:
         AZ_TYPE_INFO_WITH_NAME_DECL(o3de_dualsenseModuleInterface)
@@ -21,4 +20,4 @@ namespace o3de_dualsense
          */
         AZ::ComponentTypeList GetRequiredSystemComponents() const override;
     };
-}// namespace o3de_dualsense
+} // namespace o3de_dualsense

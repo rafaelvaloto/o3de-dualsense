@@ -1,7 +1,8 @@
 ﻿#pragma once
 
-#include <GCore/Templates/TGenericHardwareInfo.h>
 #include "DualSenseWindowsDeviceInfo.h"
+
+#include <GCore/Templates/TGenericHardwareInfo.h>
 
 namespace o3de_dualsense
 {
@@ -12,40 +13,21 @@ namespace o3de_dualsense
     struct WindowsHardwarePolicy
     {
     public:
-		void Read(FDeviceContext* Context)
-		{
-			WindowsDeviceInfo::Read(Context);
-		}
+        void Read(FDeviceContext* Context) { WindowsDeviceInfo::Read(Context); }
 
-		void Write(FDeviceContext* Context)
-		{
-			WindowsDeviceInfo::Write(Context);
-		}
+        void Write(FDeviceContext* Context) { WindowsDeviceInfo::Write(Context); }
 
-		void Detect(std::vector<FDeviceContext>& Devices)
-		{
-			WindowsDeviceInfo::Detect(Devices);
-		}
+        void Detect(std::vector<FDeviceContext>& Devices) { WindowsDeviceInfo::Detect(Devices); }
 
-		bool CreateHandle(FDeviceContext* Context)
-		{
-			return WindowsDeviceInfo::CreateHandle(Context);
-		}
+        bool CreateHandle(FDeviceContext* Context) { return WindowsDeviceInfo::CreateHandle(Context); }
 
-		void InvalidateHandle(FDeviceContext* Context)
-		{
-			WindowsDeviceInfo::InvalidateHandle(Context);
-		}
+        void InvalidateHandle(FDeviceContext* Context) { WindowsDeviceInfo::InvalidateHandle(Context); }
 
-		void ProcessAudioHaptic(FDeviceContext* Context)
-		{
-			WindowsDeviceInfo::ProcessAudioHapitc(Context);
-		}
+        void ProcessAudioHaptic(FDeviceContext* Context) { WindowsDeviceInfo::ProcessAudioHapitc(Context); }
 
-		void InitializeAudioDevice(FDeviceContext* /*Context*/)
-		{
-			// WindowsDeviceInfo::InitializeAudioDevice(Context);
-		}
-
+        void InitializeAudioDevice(FDeviceContext* /*Context*/)
+        {
+            // WindowsDeviceInfo::InitializeAudioDevice(Context);
+        }
     };
-}
+} // namespace o3de_dualsense

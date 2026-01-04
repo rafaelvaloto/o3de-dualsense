@@ -1,74 +1,81 @@
 ﻿#pragma once
 
-#include <AzCore/Debug/Trace.h>
-#include <o3de-dualsense/o3de-dualsenseBus.h>
 #include "Devices/DualSenseInputDevice.h"
-#include <AzFramework/Input/Devices/InputDevice.h>
-#include "GCore/Types/DSCoreTypes.h"
 #include "GCore/Templates/TBasicDeviceRegistry.h"
+#include "GCore/Types/DSCoreTypes.h"
 
-namespace o3de_dualsense {
+#include <AzCore/Debug/Trace.h>
+#include <AzFramework/Input/Devices/InputDevice.h>
+#include <o3de-dualsense/o3de-dualsenseBus.h>
+
+namespace o3de_dualsense
+{
     using namespace GamepadCore;
     using namespace AzFramework;
 
-    struct DeviceRegistryPolicy {
+    struct DeviceRegistryPolicy
+    {
         DeviceRegistryPolicy() = default;
 
-        DeviceRegistryPolicy(const DeviceRegistryPolicy &) = delete;
+        DeviceRegistryPolicy(const DeviceRegistryPolicy&) = delete;
 
-        DeviceRegistryPolicy &operator=(const DeviceRegistryPolicy &) = delete;
+        DeviceRegistryPolicy& operator=(const DeviceRegistryPolicy&) = delete;
 
-        DeviceRegistryPolicy(DeviceRegistryPolicy &&) = default;
+        DeviceRegistryPolicy(DeviceRegistryPolicy&&) = default;
 
-        DeviceRegistryPolicy &operator=(DeviceRegistryPolicy &&) = default;
+        DeviceRegistryPolicy& operator=(DeviceRegistryPolicy&&) = default;
 
         using EngineIdType = AZ::u32;
         std::unordered_map<EngineIdType, std::unique_ptr<DualSenseInputDevice>> CustomDevicesMap;
 
-        struct Hasher {
-            EngineIdType operator()(const EngineIdType &Id) const { return Id; }
+        struct Hasher
+        {
+            EngineIdType operator()(const EngineIdType& Id) const { return Id; }
         };
 
         EngineIdType deviceIdCounter = 0;
         EngineIdType AllocEngineDevice() { return deviceIdCounter++; }
 
-        void DispatchNewGamepad(EngineIdType GamepadId) {
+        void DispatchNewGamepad(EngineIdType GamepadId)
+        {
             InputDeviceId deviceName(AZStd::string_view("dualsense"), GamepadId);
             auto DualInputDevice = std::make_unique<DualSenseInputDevice>(deviceName);
             CustomDevicesMap[GamepadId] = std::move(DualInputDevice);
-            if (CustomDevicesMap[GamepadId]) {
+            if (CustomDevicesMap[GamepadId])
+            {
                 CustomDevicesMap[GamepadId]->SetConnected(true);
                 AZ_Printf("DualSense", "Gamepad Connected: Id %d Name %s", GamepadId, deviceName.GetName());
             }
         };
 
-        void DisconnectDevice(EngineIdType GamepadId) {
+        void DisconnectDevice(EngineIdType GamepadId)
+        {
             AZ_Printf("DualSense", "Gamepad Disconnect: Id %d", GamepadId);
             CustomDevicesMap.erase(GamepadId);
         }
     };
 
-    class DeviceRegistry
-            : public TBasicDeviceRegistry<DeviceRegistryPolicy>, protected o3de_dualsenseRequestBus::Handler {
+    class DeviceRegistry : public TBasicDeviceRegistry<DeviceRegistryPolicy>,
+                           protected o3de_dualsenseRequestBus::Handler
+    {
     public:
         DeviceRegistry() = default;
 
-        void ProccessInput(AZ::u32 Id, FDeviceContext *Context) {
+        void ProccessInput(AZ::u32 Id, FDeviceContext* Context)
+        {
             this->Policy.CustomDevicesMap[Id]->ProcessRawInput(Context);
         }
 
-        ISonyGamepad *GetGamepadLibrary(AZ::u32 Id) {
-            return this->GetLibrary(Id);
-        }
+        ISonyGamepad* GetGamepadLibrary(AZ::u32 Id) { return this->GetLibrary(Id); }
 
-        AZ::u32 GetAllocatedDevices() const {
-            return this->Policy.deviceIdCounter;
-        }
+        AZ::u32 GetAllocatedDevices() const { return this->Policy.deviceIdCounter; }
 
-        void Activate() {
+        void Activate()
+        {
             o3de_dualsenseRequestBus::Handler::BusConnect();
 
-            if (o3de_dualsenseInterface::Get() == nullptr) {
+            if (o3de_dualsenseInterface::Get() == nullptr)
+            {
                 o3de_dualsenseInterface::Register(this);
                 AZ_Printf("DualSense", "Registrado a interface no Activate.");
             }
@@ -76,10 +83,12 @@ namespace o3de_dualsense {
             AZ_Printf("DualSense", "DeviceRegistry active and connected bus!");
         }
 
-        void Deactivate() {
+        void Deactivate()
+        {
             o3de_dualsenseRequestBus::Handler::BusDisconnect();
 
-            if (o3de_dualsenseInterface::Get() == this) {
+            if (o3de_dualsenseInterface::Get() == this)
+            {
                 o3de_dualsenseInterface::Unregister(this);
             }
 
@@ -87,4 +96,4 @@ namespace o3de_dualsense {
             AZ_Printf("DualSense", "Todos os dispositivos foram limpos no Deactivate.");
         }
     };
-}
+} // namespace o3de_dualsense

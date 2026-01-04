@@ -1,18 +1,16 @@
 
 #pragma once
+#include "Adapters/DeviceRegistry.h"
+#include "Platforms/Windows/DualSenseWindowsDeviceInfo.h"
+#include "Platforms/Windows/DualSenseWindowsPolicy.h"
+
 #include <AzCore/Component/Component.h>
 #include <AzCore/Component/TickBus.h>
-#include "Adapters/DeviceRegistry.h"
 #include <o3de-dualsense/o3de-dualsenseBus.h>
-#include "Platforms/Windows/DualSenseWindowsPolicy.h"
-#include "Platforms/Windows/DualSenseWindowsDeviceInfo.h"
-#include "Adapters/DeviceRegistry.h"
 
 namespace o3de_dualsense
 {
-    class o3de_dualsenseSystemComponent
-        : public AZ::Component
-        , public AZ::TickBus::Handler
+    class o3de_dualsenseSystemComponent : public AZ::Component, public AZ::TickBus::Handler
     {
     public:
         AZ_COMPONENT_DECL(o3de_dualsenseSystemComponent);
@@ -34,8 +32,6 @@ namespace o3de_dualsense
 
     protected:
         void OnTick(float deltaTime, AZ::ScriptTimePoint time) override;
-
-
     };
 
 } // namespace o3de_dualsense

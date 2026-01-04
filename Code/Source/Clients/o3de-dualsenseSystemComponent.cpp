@@ -1,18 +1,18 @@
 #include "o3de-dualsenseSystemComponent.h"
-#include <o3de-dualsense/o3de-dualsenseTypeIds.h>
+
 #include <AzCore/Serialization/SerializeContext.h>
+#include <o3de-dualsense/o3de-dualsenseTypeIds.h>
 
-
-
-
-namespace o3de_dualsense {
+namespace o3de_dualsense
+{
     AZ_COMPONENT_IMPL(o3de_dualsenseSystemComponent, "o3de_dualsenseSystemComponent",
                       o3de_dualsenseSystemComponentTypeId);
 
-    void o3de_dualsenseSystemComponent::Reflect(AZ::ReflectContext *context) {
-        if (auto serializeContext = azrtti_cast<AZ::SerializeContext *>(context)) {
-            serializeContext->Class<o3de_dualsenseSystemComponent, AZ::Component>()
-                    ->Version(0);
+    void o3de_dualsenseSystemComponent::Reflect(AZ::ReflectContext* context)
+    {
+        if (auto serializeContext = azrtti_cast<AZ::SerializeContext*>(context))
+        {
+            serializeContext->Class<o3de_dualsenseSystemComponent, AZ::Component>()->Version(0);
         }
     }
 
@@ -21,7 +21,8 @@ namespace o3de_dualsense {
         provided.push_back(AZ_CRC_CE("o3de_dualsenseService"));
     }
 
-    void o3de_dualsenseSystemComponent::GetIncompatibleServices(AZ::ComponentDescriptor::DependencyArrayType& incompatible)
+    void
+    o3de_dualsenseSystemComponent::GetIncompatibleServices(AZ::ComponentDescriptor::DependencyArrayType& incompatible)
     {
         incompatible.push_back(AZ_CRC_CE("o3de_dualsenseService"));
     }
@@ -29,7 +30,7 @@ namespace o3de_dualsense {
     void o3de_dualsenseSystemComponent::GetRequiredServices(AZ::ComponentDescriptor::DependencyArrayType& required)
     {
         AZ_UNUSED(required);
-        //required.push_back(AZ_CRC_CE("InputSystem"));
+        // required.push_back(AZ_CRC_CE("InputSystem"));
     }
 
     void o3de_dualsenseSystemComponent::GetDependentServices(AZ::ComponentDescriptor::DependencyArrayType& dependent)
@@ -38,15 +39,12 @@ namespace o3de_dualsense {
         // dependent.push_back(...);
     }
 
-    o3de_dualsenseSystemComponent::o3de_dualsenseSystemComponent()
-    {
-    }
+    o3de_dualsenseSystemComponent::o3de_dualsenseSystemComponent() {}
 
-    o3de_dualsenseSystemComponent::~o3de_dualsenseSystemComponent()
-    {
-    }
+    o3de_dualsenseSystemComponent::~o3de_dualsenseSystemComponent() {}
 
-    void o3de_dualsenseSystemComponent::Activate() {
+    void o3de_dualsenseSystemComponent::Activate()
+    {
         auto windowsHardware = std::make_unique<WindowsHardware>();
         IPlatformHardwareInfo::SetInstance(std::move(windowsHardware));
 
@@ -54,7 +52,8 @@ namespace o3de_dualsense {
         AZ::TickBus::Handler::BusConnect();
     }
 
-    void o3de_dualsenseSystemComponent::Deactivate() {
+    void o3de_dualsenseSystemComponent::Deactivate()
+    {
         AZ::TickBus::Handler::BusDisconnect();
 
         m_deviceRegistry.Deactivate();
@@ -62,22 +61,28 @@ namespace o3de_dualsense {
     }
 
     bool IsRunningRumble = false;
-    void o3de_dualsenseSystemComponent::OnTick(const float deltaTime, AZ::ScriptTimePoint time) {
+    void o3de_dualsenseSystemComponent::OnTick(const float deltaTime, AZ::ScriptTimePoint time)
+    {
         AZ_UNUSED(time);
         m_deviceRegistry.PlugAndPlay(deltaTime);
 
         const AZ::u32 inDevices = m_deviceRegistry.GetAllocatedDevices();
-        for (AZ::u32 i = 0; i < inDevices; i++) {
+        for (AZ::u32 i = 0; i < inDevices; i++)
+        {
             ISonyGamepad* gamepad = m_deviceRegistry.GetGamepadLibrary(i);
-            if (gamepad) {
+            if (gamepad)
+            {
                 gamepad->UpdateInput(deltaTime);
-                if (FDeviceContext* Context = gamepad->GetMutableDeviceContext()) {
+                if (FDeviceContext* Context = gamepad->GetMutableDeviceContext())
+                {
                     m_deviceRegistry.ProccessInput(i, Context);
                 }
 
-                if (!IsRunningRumble) {
+                if (!IsRunningRumble)
+                {
                     IGamepadTrigger* Trigger = gamepad->GetIGamepadTrigger();
-                    if (Trigger) {
+                    if (Trigger)
+                    {
                         Trigger->SetBow22(0xf8, 0x3f, EDSGamepadHand::Left);
                         Trigger->SetMachine27(0x80, 0x02, 0x03, 0x0f, 0x19, 0x02, EDSGamepadHand::Right);
                     }
@@ -91,7 +96,6 @@ namespace o3de_dualsense {
                     IsRunningRumble = true;
                 }
             }
-
         }
     }
 } // namespace o3de_dualsense

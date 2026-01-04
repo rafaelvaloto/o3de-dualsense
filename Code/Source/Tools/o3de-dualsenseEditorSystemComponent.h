@@ -2,17 +2,16 @@
 #pragma once
 
 #include <AzToolsFramework/API/ToolsApplicationAPI.h>
-
 #include <Clients/o3de-dualsenseSystemComponent.h>
 
 namespace o3de_dualsense
 {
     /// System component for o3de_dualsense editor
-    class o3de_dualsenseEditorSystemComponent
-        : public o3de_dualsenseSystemComponent
-        , protected AzToolsFramework::EditorEvents::Bus::Handler
+    class o3de_dualsenseEditorSystemComponent : public o3de_dualsenseSystemComponent,
+                                                protected AzToolsFramework::EditorEvents::Bus::Handler
     {
         using BaseSystemComponent = o3de_dualsenseSystemComponent;
+
     public:
         AZ_COMPONENT_DECL(o3de_dualsenseEditorSystemComponent);
 

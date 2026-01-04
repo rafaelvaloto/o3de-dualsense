@@ -3,13 +3,13 @@
 //
 
 #include "DualSenseInputDevice.h"
+
 #include <AzFramework/Input/Devices/Gamepad/InputDeviceGamepad.h>
 namespace o3de_dualsense
 {
     using namespace AzFramework;
 
-    DualSenseInputDevice::DualSenseInputDevice(const InputDeviceId& inputDeviceId)
-        : InputDevice(inputDeviceId)
+    DualSenseInputDevice::DualSenseInputDevice(const InputDeviceId& inputDeviceId) : InputDevice(inputDeviceId)
     {
         // Cross (X) -> button A (South)
         buttonCross = aznew InputChannelDigital(InputDeviceGamepad::Button::A, *this);
@@ -22,7 +22,6 @@ namespace o3de_dualsense
 
         // Triangle (/\) -> button Y (North)
         buttonTriangle = aznew InputChannelDigital(InputDeviceGamepad::Button::Y, *this);
-
 
         // L2 e R2 (Triggers)
         L2 = aznew InputChannelAnalog(InputDeviceGamepad::Trigger::L2, *this);
@@ -43,7 +42,8 @@ namespace o3de_dualsense
         m_allChannelsById[AnalogRight->GetInputChannelId()] = AnalogRight;
     }
 
-    DualSenseInputDevice::~DualSenseInputDevice() {
+    DualSenseInputDevice::~DualSenseInputDevice()
+    {
         for (const auto& pair : m_allChannelsById)
         {
             delete pair.second;
@@ -56,15 +56,18 @@ namespace o3de_dualsense
         return m_allChannelsById;
     }
 
-    const InputDeviceId& DualSenseInputDevice::GetInputDeviceId() const {
+    const InputDeviceId& DualSenseInputDevice::GetInputDeviceId() const
+    {
         return m_deviceId;
     }
 
-    bool DualSenseInputDevice::IsSupported() const {
+    bool DualSenseInputDevice::IsSupported() const
+    {
         return true;
     }
 
-    bool DualSenseInputDevice::IsConnected() const {
+    bool DualSenseInputDevice::IsConnected() const
+    {
         return m_connected;
     }
 
@@ -80,31 +83,46 @@ namespace o3de_dualsense
         }
     }
 
-    void DualSenseInputDevice::ProcessRawInput(FDeviceContext* Context) {
-        if (!Context) return;
+    void DualSenseInputDevice::ProcessRawInput(FDeviceContext* Context)
+    {
+        if (!Context)
+            return;
 
         const auto& state = Context->GetInputState();
 
-        if (buttonCross) buttonCross->SimulateRawInput(state.bCross);
-        if (buttonCircle) buttonCircle->SimulateRawInput(state.bCircle);
-        if (buttonSquare) buttonSquare->SimulateRawInput(state.bSquare);
-        if (buttonTriangle) buttonTriangle->SimulateRawInput(state.bTriangle);
+        if (buttonCross)
+            buttonCross->SimulateRawInput(state.bCross);
+        if (buttonCircle)
+            buttonCircle->SimulateRawInput(state.bCircle);
+        if (buttonSquare)
+            buttonSquare->SimulateRawInput(state.bSquare);
+        if (buttonTriangle)
+            buttonTriangle->SimulateRawInput(state.bTriangle);
 
-        if (L2) L2->SimulateRawInput(state.LeftTriggerAnalog);
-        if (R2) R2->SimulateRawInput(state.RightTriggerAnalog);
+        if (L2)
+            L2->SimulateRawInput(state.LeftTriggerAnalog);
+        if (R2)
+            R2->SimulateRawInput(state.RightTriggerAnalog);
 
         AZ::Vector2 leftStick(state.LeftAnalog.X, state.LeftAnalog.Y);
-        if (AnalogLeft) AnalogLeft->SimulateRawInput2D(leftStick.GetX(), leftStick.GetY());
+        if (AnalogLeft)
+            AnalogLeft->SimulateRawInput2D(leftStick.GetX(), leftStick.GetY());
 
         AZ::Vector2 rightStick(state.RightAnalog.X, state.RightAnalog.Y);
-        if (AnalogRight) AnalogRight->SimulateRawInput2D(rightStick.GetX(), rightStick.GetY());
+        if (AnalogRight)
+            AnalogRight->SimulateRawInput2D(rightStick.GetX(), rightStick.GetY());
 
-        if (buttonCross->GetValue() || buttonCircle->GetValue() || buttonSquare->GetValue() || buttonTriangle->GetValue()) {
-            AZ_Printf("DualSense", "buttonCross: %f, buttonCircle: %f buttonSquare: %f buttonTriangle: %f", buttonCross->GetValue(), buttonCircle->GetValue(), buttonSquare->GetValue(), buttonTriangle->GetValue());
+        if (buttonCross->GetValue() || buttonCircle->GetValue() || buttonSquare->GetValue() ||
+            buttonTriangle->GetValue())
+        {
+            AZ_Printf("DualSense", "buttonCross: %f, buttonCircle: %f buttonSquare: %f buttonTriangle: %f",
+                      buttonCross->GetValue(), buttonCircle->GetValue(), buttonSquare->GetValue(),
+                      buttonTriangle->GetValue());
         }
 
-        if (L2->GetValue() > 0.0f || R2->GetValue() > 0.0f) {
+        if (L2->GetValue() > 0.0f || R2->GetValue() > 0.0f)
+        {
             AZ_Printf("DualSense", "L2: %f, R2: %f", L2->GetValue(), R2->GetValue());
         }
     }
-}
+} // namespace o3de_dualsense
