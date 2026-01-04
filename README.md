@@ -295,7 +295,7 @@ Contributions are welcome! This is a prototype meant to evolve.
 This project is licensed under the **MIT License** - see the gem.json for details.
 
 ---
-A special thanks to the Unreal Engine team for providing the Arena Shooter templates, which served as an excellent foundation for the example project demonstrating this plugin's features.
+
 ## ⚖️ Disclaimer and Trademarks
 
 This software is an independent and unofficial project. It is **not** affiliated, associated, authorized, endorsed by, or in any way officially connected with Sony Interactive Entertainment Inc., Microsoft Corporation, Apple Inc., Epic Games, Unity Technologies, the Godot Engine project, or the Open 3D Foundation.
