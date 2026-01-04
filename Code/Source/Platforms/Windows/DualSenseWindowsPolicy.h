@@ -25,9 +25,6 @@ namespace o3de_dualsense
 
         void ProcessAudioHaptic(FDeviceContext* Context) { WindowsDeviceInfo::ProcessAudioHapitc(Context); }
 
-        void InitializeAudioDevice(FDeviceContext* /*Context*/)
-        {
-            // WindowsDeviceInfo::InitializeAudioDevice(Context);
-        }
+        void InitializeAudioDevice(FDeviceContext* Context) { WindowsDeviceInfo::InitializeAudioDevice(Context); }
     };
 } // namespace o3de_dualsense
