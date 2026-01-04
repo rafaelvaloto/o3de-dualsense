@@ -1,0 +1,30 @@
+{
+    "gem_name": "o3de-dualsense",
+    "version": "1.0.0",
+    "display_name": "o3de_dualsense",
+    "license": "MIT",
+    "license_url": "",
+    "origin": "Rafael Valoto",
+    "origin_url": "",
+    "type": "Code",
+    "summary": "Integrates Sony DualSense controller support into O3DE using GamepadCore.",
+    "canonical_tags": [
+        "Gem"
+    ],
+    "user_tags": [
+        "o3de-dualsense"
+    ],
+    "platforms": [
+        "Windows","Linux"
+    ],
+    "icon_path": "",
+    "requirements": "",
+    "documentation_url": "",
+    "dependencies": [
+    ],
+    "repo_uri": "",
+    "compatible_engines": [
+    ],
+    "engine_api_dependencies":[
+    ]
+}
